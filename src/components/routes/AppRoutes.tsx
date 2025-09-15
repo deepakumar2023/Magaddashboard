@@ -11,6 +11,8 @@ import FormElements from "../../pages/Forms/FormElements";
 import SignIn from "../../pages/AuthPages/SignIn";
 import SignUp from "../../pages/AuthPages/SignUp";
 import NotFound from "../../pages/OtherPage/NotFound";
+import Board from "../../pages/master/Board";
+import Category from "../../pages/master/Category";
 
 function AppRoutes() {
   return (
@@ -20,6 +22,8 @@ function AppRoutes() {
         <Route index path="/" element={<Home />} />
         <Route path="/profile" element={<UserProfiles />} />
         <Route path="/form-elements" element={<FormElements />} />
+        <Route path="/board" element={<Board />} />
+        <Route path="/category" element={<Category />} />
 
         
       </Route>

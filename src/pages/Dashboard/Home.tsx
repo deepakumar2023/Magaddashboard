@@ -4,6 +4,7 @@ import StatisticsChart from "../../components/ecommerce/StatisticsChart";
 import MonthlyTarget from "../../components/ecommerce/MonthlyTarget";
 
 import PageMeta from "../../components/common/PageMeta";
+import CountryMap from "../../components/ecommerce/CountryMap";
 
 export default function Home() {
   return (
@@ -31,6 +32,6 @@ export default function Home() {
 
       
       </div>
-    </>
+    </> 
   );
 }
