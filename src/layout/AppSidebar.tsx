@@ -254,23 +254,23 @@ useEffect(() => {
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
+                className="dark:hidden  w-[100px] h-[50px] object-contain "
+                src="/images/logo/magadlogo.jpg"
                 alt="Logo"
-                width={150}
+                width={80}
                 height={40}
               />
               <img
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
+                className="hidden dark:block w-[100px] h-[50px] object-contain"
+                src="/images/logo/magadlogo.jpg"
                 alt="Logo"
-                width={150}
+                width={100}
                 height={40}
               />
             </>
           ) : (
             <img
-              src="/images/logo/logo-icon.svg"
+               src="/images/logo/magadlogo.jpg"
               alt="Logo"
               width={32}
               height={32}
