@@ -1,14 +1,21 @@
+// store/store.ts
 import { configureStore } from "@reduxjs/toolkit";
-import { api } from "../services/api"; // ✅ your RTK Query API service
+import authReducer from "../features/authSlice";
+import boardReducer from "../features/boardSlice";
+import categoryReducer from "../features/categorySlice";
+import { boardApi } from "../services/api/boardApi"; // import your RTK Query api
 
 export const store = configureStore({
   reducer: {
-    [api.reducerPath]: api.reducer, // only RTK Query reducer
+    auth: authReducer,
+    board: boardReducer,
+    category: categoryReducer,
+    // ✅ add RTK Query reducer
+    [boardApi.reducerPath]: boardApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
+    getDefaultMiddleware().concat(boardApi.middleware), // ✅ add RTK Query middleware
 });
 
-// ✅ Types
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
