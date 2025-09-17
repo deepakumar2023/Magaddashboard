@@ -11,7 +11,7 @@ import NotFound from "../../pages/OtherPage/NotFound";
 import Board from "../../pages/master/board/getBoard";
 import Category from "../../pages/master/Category";
 
-// import ProtectedRoute from "../routes/ProtectedRoute"; // ✅ Import ProtectedRoute
+import ProtectedRoute from "../routes/ProtectedRoute"; // ✅ Import ProtectedRoute
 
 function AppRoutes() {
   return (
@@ -21,14 +21,14 @@ function AppRoutes() {
       <Route path="/signup" element={<SignUp />} />
 
       {/* Protected Routes */}
-      {/* <Route element={<ProtectedRoute />}> */}
+      <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Home />} />
           <Route path="/profile" element={<UserProfiles />} />
           <Route path="/board" element={<Board />} />
           <Route path="/category" element={<Category />} />
         </Route>
-      {/* </Route> */}
+      </Route>
 
       {/* 404 Fallback */}
       <Route path="*" element={<NotFound />} />

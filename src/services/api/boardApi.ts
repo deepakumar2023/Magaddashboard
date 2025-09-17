@@ -9,11 +9,13 @@ export interface Board {
 
 export interface BoardFilters {
   page?: number;
+  limit?: number; // Add this line
   board_name?: string;
   status?: number;
   from_date?: string;
   to_date?: string;
 }
+
 
 export const boardApi = builder.injectEndpoints({
   endpoints: (builder) => ({

@@ -9,10 +9,19 @@ export default defineConfig({
     svgr({
       svgrOptions: {
         icon: true,
-        // This will transform your SVG to a React component
         exportType: "named",
         namedExport: "ReactComponent",
       },
     }),
   ],
+  server: {
+    proxy: {
+      // Proxy all requests starting with /api/v1 to the backend
+      "/api/v1": {
+        target: "https://api.aspirationladder.org",
+        changeOrigin: true,
+        secure: false, // disable SSL check if needed
+      },
+    },
+  },
 });

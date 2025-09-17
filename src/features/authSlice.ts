@@ -1,8 +1,10 @@
+
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  token: null,
-  user: null, // role info bhi aa sakti hai
+  token: localStorage.getItem("token") || null, // save token from storage
+  user: null,
 };
 
 const authSlice = createSlice({
@@ -12,13 +14,16 @@ const authSlice = createSlice({
     setCredentials: (state, action) => {
       state.token = action.payload.token;
       state.user = action.payload.user;
+      localStorage.setItem("token", action.payload.token); // store token
     },
     logout: (state) => {
       state.token = null;
       state.user = null;
+      localStorage.removeItem("token");
     },
   },
 });
 
 export const { setCredentials, logout } = authSlice.actions;
 export default authSlice.reducer;
+

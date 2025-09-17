@@ -153,7 +153,7 @@
 // }
 
 import { useState, FormEvent } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router"; // Fixed import
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -181,31 +181,37 @@ export default function SignInForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setErrors({}); // Clear previous errors
+    
+    // Validation
+    const newErrors: { username?: string; password?: string } = {};
+    if (!username) newErrors.username = "Username is required";
+    if (!password) newErrors.password = "Password is required";
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    setErrors({});
 
     try {
-      // Call backend login API
-      const userData = await login({ username, password }).unwrap();
+      // Create FormData object instead of JSON
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+      
+      // Additional fields if your backend requires
+      // formData.append('grant_type', 'password');
+      // formData.append('client_id', 'your_client_id');
 
-      // Save token and user in Redux
+      const userData = await login(formData).unwrap();
+      localStorage.setItem("token", userData.token);
       dispatch(setCredentials(userData));
-
-      // Redirect to dashboard
       navigate("/dashboard");
+      toast.success("Login successful!");
     } catch (err: any) {
-      // Backend generic message
-      const backendMessage = err?.data?.message || "Something went wrong";
-
-      // Show toast for backend messages
-      toast.error(backendMessage);
-
-      // Field-specific backend errors
-      if (err?.data?.errors) {
-        setErrors(err.data.errors);
-      } else {
-        // Fallback: assign generic message to inputs
-        setErrors({ username: backendMessage, password: backendMessage });
-      }
+      console.error("Login error:", err);
+      toast.error(err?.data?.message || "Login failed. Please check your credentials.");
     }
   };
 
@@ -241,9 +247,10 @@ export default function SignInForm() {
                 </Label>
                 <Input
                   type="text"
-                  placeholder="Enter Name"
+                  placeholder="Enter your username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  error={!!errors.username}
                 />
                 {errors.username && (
                   <p className="mt-1 text-xs text-red-500">{errors.username}</p>
@@ -261,8 +268,10 @@ export default function SignInForm() {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    error={!!errors.password}
                   />
-                  <span
+                  <button
+                    type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute -translate-y-1/2 cursor-pointer right-4 top-1/2"
                   >
@@ -271,7 +280,7 @@ export default function SignInForm() {
                     ) : (
                       <EyeCloseIcon className="fill-gray-500 size-5" />
                     )}
-                  </span>
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="mt-1 text-xs text-red-500">{errors.password}</p>
@@ -281,7 +290,10 @@ export default function SignInForm() {
               {/* Remember Me */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <Checkbox checked={isChecked} onChange={setIsChecked} />
+                  <Checkbox 
+                    checked={isChecked} 
+                    onChange={(checked) => setIsChecked(checked)} 
+                  />
                   <span className="block font-normal text-gray-700 text-theme-sm">
                     Keep me logged in
                   </span>
@@ -301,6 +313,7 @@ export default function SignInForm() {
                   className="w-full"
                   size="sm"
                   disabled={isLoading}
+              
                 >
                   {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
