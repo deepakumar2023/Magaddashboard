@@ -26,29 +26,24 @@ export interface CollegeFilters {
   to_date?: string;
 }
 
-// Backend response type for create/update
-export interface CollegeResponse {
-  status: boolean;
-  message: string;
-  data?: College;
-  errors?: any;
-}
-
 export const collegeApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    // ✅ Get colleges with filters
     getColleges: builder.query<College[], CollegeFilters>({
       query: (filters) => {
         const params = new URLSearchParams();
         if (filters.page) params.append("page", filters.page.toString());
         if (filters.limit) params.append("limit", filters.limit.toString());
-        if (filters.college_name) params.append("college_name", filters.college_name);
+        if (filters.college_name) params.append("college_name", filters.college_name); // removed extra space
         if (filters.status !== undefined) params.append("status", filters.status.toString());
         if (filters.from_date) params.append("from_date", filters.from_date);
         if (filters.to_date) params.append("to_date", filters.to_date);
+
         return `/college?${params.toString()}`;
       },
     }),
 
+    // ✅ Get college by ID
     getCollegeById: builder.query<College, number>({
       query: (id) => `/college/edit/${id}`,
       transformResponse: (response: any) => {
@@ -72,8 +67,8 @@ export const collegeApi = api.injectEndpoints({
       },
     }),
 
-    // ✅ Fix: createCollege now returns CollegeResponse
-    createCollege: builder.mutation<CollegeResponse, FormData>({
+    // ✅ Create college (FormData — supports files too)
+    createCollege: builder.mutation<College, FormData>({
       query: (formData) => ({
         url: "/college/add",
         method: "POST",
@@ -81,6 +76,7 @@ export const collegeApi = api.injectEndpoints({
       }),
     }),
 
+    // ✅ Delete college
     deleteCollege: builder.mutation<void, number>({
       query: (id) => ({
         url: `/college/delete/${id}`,

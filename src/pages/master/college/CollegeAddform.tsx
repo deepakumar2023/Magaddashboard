@@ -1,5 +1,5 @@
 import { useState, FormEvent } from "react";
-import { toast } from "react-toastify";
+
 import { useNavigate } from "react-router";
 import { useCreateCollegeMutation } from "../../../services/api/collegeApi"; // ✅ renamed
 
@@ -11,6 +11,7 @@ export default function CollegeAddForm() {
     const [collegeAddress, setCollegeAddress] = useState<string>("");
     const [degree, setDegree] = useState<string>("");
     const [status, setStatus] = useState<number>(1);
+    
 
     const navigate = useNavigate();
     const [createCollege, { isLoading }] = useCreateCollegeMutation();
@@ -31,7 +32,7 @@ export default function CollegeAddForm() {
             const res = await createCollege(formData).unwrap();
 
             if (res.status) {
-                toast.success(res.message);
+                
                 // reset
                 setCollegeName("");
                 setCollegeType("");
@@ -42,7 +43,7 @@ export default function CollegeAddForm() {
                 setStatus(1);
                 navigate("/college");
             } else {
-                console.log("❌ " + res.message, res.errors);
+              
             }
         } catch (err) {
             console.error("❌ Error creating college:", err);

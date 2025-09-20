@@ -20,7 +20,6 @@ export interface CategoryFilters {
   to_date?: string;
 }
 
-// Optional wrapper for API responses that include messages/errors
 export interface CategoryResponse {
   status: boolean;
   message: string;
@@ -43,9 +42,14 @@ export const categoryApi = api.injectEndpoints({
 
         return `/category?${params.toString()}`;
       },
-      transformResponse: (response: any) => {
-        return response.data || [];
-      },
+      transformResponse: (response: any) => response.data || [],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((category) => ({ type: "Category" as const, id: category.id })),
+              { type: "Category", id: "LIST" },
+            ]
+          : [{ type: "Category", id: "LIST" }],
     }),
 
     // ✅ Get category by ID
@@ -63,13 +67,14 @@ export const categoryApi = api.injectEndpoints({
       },
     }),
 
-    // ✅ Create category (FormData)
+    // ✅ Create category
     createCategory: builder.mutation<CategoryResponse, FormData>({
       query: (formData) => ({
         url: "/category/add",
         method: "POST",
         body: formData,
       }),
+      invalidatesTags: [{ type: "Category", id: "LIST" }], // ❌ invalidate cache after create
     }),
 
     // ✅ Update category
@@ -84,6 +89,7 @@ export const categoryApi = api.injectEndpoints({
         },
         headers: { "Content-Type": "application/json" },
       }),
+      invalidatesTags: [{ type: "Category", id: "LIST" }], // ❌ invalidate cache after update
     }),
 
     // ✅ Delete category
@@ -92,6 +98,7 @@ export const categoryApi = api.injectEndpoints({
         url: `/category/delete/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: [{ type: "Category", id: "LIST" }], // ❌ invalidate cache after delete
     }),
   }),
   overrideExisting: false,

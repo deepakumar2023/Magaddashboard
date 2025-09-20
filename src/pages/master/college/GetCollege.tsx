@@ -12,6 +12,7 @@ import {
   useDeleteCollegeMutation,
   useGetCollegesQuery,
 } from "../../../services/api/collegeApi";
+import { FaRegCalendarAlt } from "react-icons/fa";
 
 // Interface for API response
 interface ApiResponse {
@@ -72,9 +73,6 @@ function CollegePage() {
     (apiResponse as ApiResponse)?.totalCount ||
     colleges.length;
 
-  const isErrorWithData = (error: any): error is { data: { message: string } } => {
-    return error && typeof error === "object" && "data" in error;
-  };
 
   const handleDelete = async (id: number) => {
     if (confirm("Are you sure to delete this college?")) {
@@ -137,35 +135,39 @@ function CollegePage() {
             <option value="0">Inactive</option>
           </select>
           {/* From Date */}
+
+
+          
+          <div className="relative w-full">
           <DatePicker
             selected={fromDate ? new Date(fromDate) : null}
             onChange={(date) => setFromDate(date ? format(date, "yyyy-MM-dd") : "")}
             dateFormat="yyyy-MM-dd"
             placeholderText="From Date"
-            className="border px-3 py-2 rounded w-full text-sm"
+               className="border px-10 py-2 rounded w-full"
             calendarClassName="rounded-lg shadow-md"
             isClearable
           />
+            <FaRegCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
 
+          </div>
+
+          <div className="relative w-full">
           {/* To Date */}
           <DatePicker
             selected={toDate ? new Date(toDate) : null}
             onChange={(date) => setToDate(date ? format(date, "yyyy-MM-dd") : "")}
             dateFormat="yyyy-MM-dd"
             placeholderText="To Date"
-            className="border px-3 py-2 rounded w-full text-sm"
+              className="border px-10 py-2 rounded w-full"
             calendarClassName="rounded-lg shadow-md"
             isClearable
           />
+            <FaRegCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+
+          </div>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-            Error loading colleges:{" "}
-            {isErrorWithData(error) ? error.data.message : "Unknown error"}
-          </div>
-        )}
 
         
 

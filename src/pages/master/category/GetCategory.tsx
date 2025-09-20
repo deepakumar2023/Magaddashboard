@@ -105,6 +105,10 @@ function CategoryPage() {
     console.log("Error:", error);
   }, [apiResponse, categories, isLoading, error]);
 
+
+
+  console.log(categories, "what is data here ")
+
   return (
     <div>
       <PageMeta title="Category Dashboard" description="Manage categories with filters & actions" />
@@ -224,12 +228,11 @@ function CategoryPage() {
                       <td className="px-6 py-4">{category.category_name}</td>
                       <td className="px-6 py-4">
                         <span
-                          className={`px-2 py-1 rounded text-xs ${category.status === 1
+                          className={`px-2 py-1 rounded text-xs ${category.status == 1
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
-                            }`}
-                        >
-                          {category.status === 1 ? "Active" : "Inactive"}
+                            }`} >
+                          {category?.status == 1 ? "Active" : "Inactive"}
                         </span>
                       </td>
                       <td className="px-6 py-4">

@@ -1,30 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Board } from "../services/api/boardApi";
-
-
-// interface Board {
-//   id: number; // number
-//   board_name: string;
-//   status: number;
-//   created_at?: string;
-// }
-
-
-
-// API Response board (raw from backend)
-export interface ApiBoard {
-  board_id: number;
+interface Board {
+  id: number; // number
   board_name: string;
   status: number;
-  created_at: string;
-}
-
-export interface ApiResponse<T> {
-  status: boolean;
-  message: string;
-  error?: string;
-  data: T;
+  created_at?: string;
 }
 
 interface BoardState {

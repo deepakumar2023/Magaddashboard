@@ -7,6 +7,8 @@ import { useCreateCategoryMutation } from "../../../services/api/categoryApi";
 export default function CategoryAddform() {
     const [categoryName, setCategoryName] = useState<string>("");
     const [status, setStatus] = useState<number>(0);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const navigate = useNavigate();
 
     const [createCategory, { isLoading }] = useCreateCategoryMutation();
@@ -21,6 +23,7 @@ export default function CategoryAddform() {
 
         try {
             const res = await createCategory(formData).unwrap();
+            // refetch();
 
             if (res.status) {
                 toast.success(res.message);
@@ -30,8 +33,10 @@ export default function CategoryAddform() {
             } else {
                 console.log("❌ " + res.message, res.errors);
             }
-        } catch (err) {
-            console.error("❌ Error creating category:", err);
+        } catch (err: any) {
+
+            setErrorMessage(err?.data?.errors?.category_name || "Something went wrong");
+
         }
     };
 
@@ -52,6 +57,7 @@ export default function CategoryAddform() {
                             <div className="mt-2">
                                 <input
                                     id="category-name"
+                                    placeholder="Enter category name"
                                     name="category-name"
                                     type="text"
                                     value={categoryName}
@@ -63,6 +69,10 @@ export default function CategoryAddform() {
                                     required
                                 />
                             </div>
+
+                            {errorMessage && (
+                                <p className="mt-1 text-sm text-red-600">{errorMessage}</p>
+                            )}
                         </div>
                     </div>
                 </div>

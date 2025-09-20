@@ -16,6 +16,7 @@ export default function EditCategoryForm() {
     // State
     const [categoryName, setCategoryName] = useState<string>("");
     const [status, setStatus] = useState<number>(0);
+       const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     // Prefill data if editing
     useEffect(() => {
@@ -46,9 +47,8 @@ export default function EditCategoryForm() {
                     toast.error(res.message);
                 }
             }
-        } catch (err) {
-            console.error("❌ Error submitting board:", err);
-            toast.error("Something went wrong!");
+        } catch (err:any) {
+           setErrorMessage(err?.data?.errors?.category_name || "Something went wrong");
         }
     };
 
@@ -84,6 +84,9 @@ export default function EditCategoryForm() {
                                     required
                                 />
                             </div>
+                             {errorMessage && (
+                                <p className="mt-1 text-sm text-red-600">{errorMessage}</p>
+                            )}
                         </div>
                     </div>
                 </div>
