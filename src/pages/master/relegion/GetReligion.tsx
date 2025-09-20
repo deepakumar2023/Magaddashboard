@@ -1,32 +1,30 @@
 import { useState, useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import PageMeta from "../../../components/common/PageMeta";
-import { Trash2, Plus } from "lucide-react";
+import { Edit, Trash2, Plus } from "lucide-react";
 import Pagination from "../../../components/ui/Pagination";
 import { useNavigate } from "react-router";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
-import {
-  College,
-  useDeleteCollegeMutation,
-  useGetCollegesQuery,
-} from "../../../services/api/collegeApi";
+
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { Religion, useDeleteReligionMutation, useGetReligionQuery } from "../../../services/api/religion";
 
 // Interface for API response
 interface ApiResponse {
-  data?: College[];
-  colleges?: College[];
-  items?: College[];
-  results?: College[];
+  data?: Religion[];
+  religions?: Religion[];
+  items?: Religion[];
+  results?: Religion[];
   total?: number;
   totalCount?: number;
   page?: number;
   totalPages?: number;
 }
 
-function CollegePage() {
-  const [collegeName, setCollegeName] = useState("");
+function ReligionPage() {
+  const [religionName, setReligionName] = useState("");
   const [status, setStatus] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -34,28 +32,28 @@ function CollegePage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
 
-  // ✅ Use college query
-  const { data: apiResponse, isLoading, error, refetch } = useGetCollegesQuery({
+  // ✅ Use religion query hook
+  const { data: apiResponse, isLoading, error, refetch } = useGetReligionQuery({
     page: currentPage,
     limit: rowsPerPage,
-    college_name: collegeName || undefined,
+    religion_name: religionName || undefined,
     status: status === "" ? undefined : Number(status),
     from_date: fromDate || undefined,
     to_date: toDate || undefined,
   });
 
-  const [deleteCollege] = useDeleteCollegeMutation();
+  const [deleteReligion] = useDeleteReligionMutation();
 
-  // Extract colleges array from API response
-  const getCollegesFromResponse = (response: ApiResponse | undefined): College[] => {
+  // Extract Religions array from API response
+  const getReligionsFromResponse = (response: ApiResponse | undefined): Religion[] => {
     if (!response) return [];
 
     if (Array.isArray(response)) {
       return response;
     } else if (Array.isArray(response.data)) {
       return response.data;
-    } else if (Array.isArray(response.colleges)) {
-      return response.colleges;
+    } else if (Array.isArray(response.religions)) {
+      return response.religions;
     } else if (Array.isArray(response.items)) {
       return response.items;
     } else if (Array.isArray(response.results)) {
@@ -65,55 +63,55 @@ function CollegePage() {
     return [];
   };
 
-  const colleges = getCollegesFromResponse(apiResponse as ApiResponse);
+  const religions = getReligionsFromResponse(apiResponse as ApiResponse);
 
   const totalCount =
     (apiResponse as ApiResponse)?.total ||
     (apiResponse as ApiResponse)?.totalCount ||
-    colleges.length;
+    religions.length;
 
   const isErrorWithData = (error: any): error is { data: { message: string } } => {
     return error && typeof error === "object" && "data" in error;
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm("Are you sure to delete this college?")) {
+    if (confirm("Are you sure to delete this religion?")) {
       try {
-        await deleteCollege(id).unwrap();
-        alert("College deleted successfully!");
+        await deleteReligion(id).unwrap();
         refetch();
+        alert("Religion deleted successfully!");
       } catch (error) {
-        console.error("Failed to delete college:", error);
-        alert("Failed to delete college. Please try again.");
+        console.error("Failed to delete religion:", error);
+        alert("Failed to delete religion. Please try again.");
       }
     }
   };
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [collegeName, status, fromDate, toDate]);
+  }, [religionName, status, fromDate, toDate]);
 
   useEffect(() => {
     console.log("API Response:", apiResponse);
-    console.log("Extracted colleges:", colleges);
+    console.log("Extracted religions:", religions);
     console.log("Loading:", isLoading);
     console.log("Error:", error);
-  }, [apiResponse, colleges, isLoading, error]);
+  }, [apiResponse, religions, isLoading, error]);
 
   return (
     <div>
-      <PageMeta title="College Dashboard" description="Manage colleges with filters & actions" />
-      <PageBreadcrumb pageTitle="College" />
+      <PageMeta title="Religion Dashboard" description="Manage religions with filters & actions" />
+      <PageBreadcrumb pageTitle="Religion" />
 
       <div className="w-full max-w-6xl mx-auto bg-white rounded-lg shadow p-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
-          <h2 className="text-lg font-semibold text-gray-700">College List</h2>
+          <h2 className="text-lg font-semibold text-gray-700">Religion List</h2>
           <button
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
-            onClick={() => navigate("/add-college-form")}
+            onClick={() => navigate("/add-religion-form")}
           >
-            <Plus size={18} /> Add College
+            <Plus size={18} /> Add Religion
           </button>
         </div>
 
@@ -121,9 +119,9 @@ function CollegePage() {
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
           <input
             type="text"
-            placeholder="College Name"
-            value={collegeName}
-            onChange={(e) => setCollegeName(e.target.value)}
+            placeholder="Religion Name"
+            value={religionName}
+            onChange={(e) => setReligionName(e.target.value)}
             className="border px-3 py-2 rounded w-full text-sm"
           />
           <select
@@ -136,38 +134,42 @@ function CollegePage() {
             <option value="1">Active</option>
             <option value="0">Inactive</option>
           </select>
+
           {/* From Date */}
-          <DatePicker
-            selected={fromDate ? new Date(fromDate) : null}
-            onChange={(date) => setFromDate(date ? format(date, "yyyy-MM-dd") : "")}
-            dateFormat="yyyy-MM-dd"
-            placeholderText="From Date"
-            className="border px-3 py-2 rounded w-full text-sm"
-            calendarClassName="rounded-lg shadow-md"
-            isClearable
-          />
+          <div className="relative w-full">
+            <DatePicker
+              selected={fromDate ? new Date(fromDate) : null}
+              onChange={(date) => setFromDate(date ? format(date, "yyyy-MM-dd") : "")}
+              dateFormat="yyyy-MM-dd"
+              placeholderText="From Date"
+              className="border px-10 py-2 rounded w-full"
+              calendarClassName="rounded-lg shadow-md"
+              isClearable
+            />
+            <FaRegCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
 
           {/* To Date */}
-          <DatePicker
-            selected={toDate ? new Date(toDate) : null}
-            onChange={(date) => setToDate(date ? format(date, "yyyy-MM-dd") : "")}
-            dateFormat="yyyy-MM-dd"
-            placeholderText="To Date"
-            className="border px-3 py-2 rounded w-full text-sm"
-            calendarClassName="rounded-lg shadow-md"
-            isClearable
-          />
+          <div className="relative w-full">
+            <DatePicker
+              selected={toDate ? new Date(toDate) : null}
+              onChange={(date) => setToDate(date ? format(date, "yyyy-MM-dd") : "")}
+              dateFormat="yyyy-MM-dd"
+              placeholderText="To Date"
+              className="border px-10 py-2 rounded w-full"
+              calendarClassName="rounded-lg shadow-md"
+              isClearable
+            />
+            <FaRegCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
         </div>
 
         {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-            Error loading colleges:{" "}
-            {isErrorWithData(error) ? error.data.message : "Unknown error"}
+            Error loading religions: {isErrorWithData(error) ? error.data.message : "Unknown error"}
           </div>
         )}
-
-
 
         {/* Table */}
         <div className="overflow-x-auto">
@@ -175,10 +177,7 @@ function CollegePage() {
             <thead className="bg-gray-100 text-gray-700 uppercase text-sm">
               <tr>
                 <th className="px-6 py-3">S.No</th>
-                <th className="px-6 py-3">College Name</th>
-                <th className="px-6 py-3">Type</th>
-                <th className="px-6 py-3">Degree</th>
-                <th className="px-6 py-3">Address</th>
+                <th className="px-6 py-3">Religion Name</th>
                 <th className="px-6 py-3">Status</th>
                 <th className="px-6 py-3">Created At</th>
                 <th className="px-6 py-3 text-center">Actions</th>
@@ -187,55 +186,56 @@ function CollegePage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="text-center text-gray-500 py-4">
+                  <td colSpan={5} className="text-center text-gray-500 py-4">
                     Loading...
                   </td>
                 </tr>
-              ) : colleges.length === 0 ? (
+              ) : religions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center text-gray-500 py-4">
-                    No colleges found.
+                  <td colSpan={5} className="text-center text-gray-500 py-4">
+                    No religions found.
                   </td>
                 </tr>
               ) : (
-                colleges
+                religions
                   .filter((fltr) =>
-                    collegeName.trim() === ""
+                    religionName.trim() === ""
                       ? true
-                      : fltr.college_name
-                        .toLowerCase()
-                        .includes(collegeName.toLowerCase())
+                      : fltr.religion_name.toLowerCase().includes(religionName.toLowerCase())
                   )
-                  .map((college: College, index: number) => (
-                    <tr key={college.id} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/college/${college.id}`)}  >
-                      <td className="px-6 py-4">
-                        {(currentPage - 1) * rowsPerPage + index + 1}
-                      </td>
-                      <td className="px-6 py-4">{college.college_name}</td>
-                      <td className="px-6 py-4">{college.college_type}</td>
-                      <td className="px-6 py-4">{college.degree_type}</td>
-                      <td className="px-6 py-4">{college.college_address}</td>
+                  .map((religion: any, index: any) => (
+                    <tr key={religion.religion_id} className="border-b hover:bg-gray-50">
+                      <td className="px-6 py-4">{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                      <td className="px-6 py-4">{religion.religion_name}</td>
                       <td className="px-6 py-4">
                         <span
-                          className={`px-2 py-1 rounded text-xs ${college.status === 1
+                          className={`px-2 py-1 rounded text-xs ${
+                            religion.status === 1
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
-                            }`}
+                          }`}
                         >
-                          {college.status === 1 ? "Active" : "Inactive"}
+                          {religion.status === 1 ? "Active" : "Inactive"}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        {college.created_at
-                          ? new Date(college.created_at).toLocaleDateString()
-                          : "--"}
+                        {religion?.created_at
+                          ? new Date(religion.created_at).toLocaleDateString()
+                          : "-"}
                       </td>
                       <td className="px-6 py-4 flex justify-center gap-3">
+                        <button
+                          title="edit"
+                          className="text-blue-600 hover:text-blue-800"
+                          onClick={() => navigate(`/religion/edit/${religion.religion_id}`)}
+                        >
+                          <Edit size={18} />
+                        </button>
                         <button
                           type="button"
                           title="trash"
                           className="text-red-600 hover:text-red-800"
-                          onClick={() => handleDelete(college.id)}
+                          onClick={() => handleDelete(religion?.religion_id)}
                         >
                           <Trash2 size={18} />
                         </button>
@@ -248,7 +248,7 @@ function CollegePage() {
         </div>
 
         {/* Pagination */}
-        {colleges.length > 0 && (
+        {religions.length > 0 && (
           <Pagination
             currentPage={currentPage}
             totalPages={Math.ceil(totalCount / rowsPerPage)}
@@ -265,4 +265,4 @@ function CollegePage() {
   );
 }
 
-export default CollegePage;
+export default ReligionPage;

@@ -11,6 +11,7 @@ import NotFound from "../../pages/OtherPage/NotFound";
 import Board from "../../pages/master/board/GetBoard";
 import Category from "../../pages/master/category/GetCategory";
 import College from "../../pages/master/college/GetCollege";
+import Religion from "../../pages/master/relegion/GetReligion";
 import ProtectedRoute from "../routes/ProtectedRoute"; // ✅ Import ProtectedRoute
 import Boardform from "../common/Boardform";
 import EditBoardForm from "../../pages/master/board/EditFormBoard";
@@ -19,6 +20,9 @@ import EditCategoryForm from "../../pages/master/category/EditFormCategory";
 import CollegeAddForm from "../../pages/master/college/CollegeAddform";
 import CollegeDetailCard from "../../pages/master/college/CollegeDetails";
 import SubCategoryAddForm from "../../pages/master/subcategory/AddSubCategory";
+import ReligionAddForm from "../../pages/master/relegion/ReligionAddform";
+import EditReligionForm from "../../pages/master/relegion/EditReligionForm";
+import SubCategoryPage from "../../pages/master/subcategory/Getsubcategory";
 
 
 function AppRoutes() {
@@ -42,12 +46,11 @@ function AppRoutes() {
           <Route path="/college" element={<College />} />
           <Route path="/add-college-form" element={<CollegeAddForm />} />
           <Route path="/college/:id" element={<CollegeDetailCard />} />
-
-          <Route path="/add-category" element={<SubCategoryAddForm/>} />
-          
-
-
-          
+          <Route path="/religion" element={<Religion />} />
+          <Route path="/add-religion-form" element={<ReligionAddForm />} />
+          <Route path="/religion/edit/:id" element={<EditReligionForm />} />
+          <Route path="/subcategory" element={<SubCategoryPage />} />
+          <Route path="/add-subcategory" element={<SubCategoryAddForm />} />
         </Route>
       </Route>
 

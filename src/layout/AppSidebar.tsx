@@ -36,7 +36,9 @@ const navItems: NavItem[] = [
     icon: <TableIcon />,
     subItems: [{ name: "Board", path: "/board", pro: false },
     { name: "Category", path: "/category", pro: false },
-    { name: "College", path: "/college", pro: false }
+    { name: "College", path: "/college", pro: false },
+    { name: "Religion", path: "/religion", pro: false },
+    { name: "Sub-Category", path: "/subcategory", pro: false },
     ],
   },
 
